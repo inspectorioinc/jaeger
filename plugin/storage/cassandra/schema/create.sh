@@ -12,6 +12,8 @@ function usage {
     >&2 echo "  DEPENDENCIES_TTL   - time to live for dependencies data, in seconds (default: 0, no TTL)"
     >&2 echo "  KEYSPACE           - keyspace (default: jaeger_v1_{datacenter})"
     >&2 echo "  REPLICATION_FACTOR - replication factor for prod (default: 2 for prod, 1 for test)"
+    >&2 echo "  USERNAME - USERNAME FOR JAEGER KEYSPACE"    
+    >&2 echo "  PASSWORD - SET PASSWORD"    
     >&2 echo ""
     >&2 echo "The template-file argument must be fully qualified path to a v00#.cql.tmpl template file."
     >&2 echo "If omitted, the template file with the highest available version will be used."
@@ -20,6 +22,8 @@ function usage {
 
 trace_ttl=${TRACE_TTL:-172800}
 dependencies_ttl=${DEPENDENCIES_TTL:-0}
+username=${USERNAME}
+password=${PASSWORD}
 
 template=$1
 if [[ "$template" == "" ]]; then
@@ -55,6 +59,8 @@ Using template file $template with parameters:
     replication = ${replication}
     trace_ttl = ${trace_ttl}
     dependencies_ttl = ${dependencies_ttl}
+    username = ${username}
+    password = ${password}
 EOF
 
 # strip out comments, collapse multiple adjacent empty lines (cat -s), substitute variables
@@ -64,4 +70,6 @@ cat $template | sed \
     -e "s/\${keyspace}/${keyspace}/g"               \
     -e "s/\${replication}/${replication}/g"         \
     -e "s/\${trace_ttl}/${trace_ttl}/g"             \
-    -e "s/\${dependencies_ttl}/${dependencies_ttl}/g" | cat -s
+    -e "s/\${dependencies_ttl}/${dependencies_ttl}/g" \
+    -e "s/\${username}/${username}/g" \
+    -e "s/\${password}/${password}/g" | cat -s

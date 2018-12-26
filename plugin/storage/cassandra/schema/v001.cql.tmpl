@@ -20,6 +20,9 @@
 --   gc_grace_seconds is non-zero, see: http://www.uberobert.com/cassandra_gc_grace_disables_hinted_handoff/
 --   For TTL of 2 days, compaction window is 1 hour, rule of thumb here: http://thelastpickle.com/blog/2016/12/08/TWCS-part1.html
 
+CREATE USER ${username} WITH PASSWORD '${password}' ;
+
+
 CREATE KEYSPACE IF NOT EXISTS ${keyspace} WITH replication = ${replication};
 
 CREATE TYPE IF NOT EXISTS ${keyspace}.keyvalue (
@@ -205,3 +208,5 @@ CREATE TABLE IF NOT EXISTS ${keyspace}.dependencies (
 CREATE CUSTOM INDEX IF NOT EXISTS ON ${keyspace}.dependencies (ts_index) 
     USING 'org.apache.cassandra.index.sasi.SASIIndex' 
     WITH OPTIONS = {'mode': 'SPARSE'};
+
+GRANT all ON KEYSPACE ${keyspace} TO ${username};
